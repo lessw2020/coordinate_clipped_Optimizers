@@ -58,6 +58,10 @@ class CoordinateWiseClipping_AdamW(Optimizer):
                         no_prox=no_prox,
                         decoupled_wd=use_decoupled_weight_decay)
         super().__init__(params, defaults)
-        
+
+    def __setstate__(self, state):
+        super(CoordinateWiseClipping_AdamW, self).__setstate__(state)
+        for group in self.param_groups:
+            group.setdefault('use_decoupled_weight_decay', True)
         
 
