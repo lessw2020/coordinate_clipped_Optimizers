@@ -14,8 +14,8 @@ class CoordinateWiseClipping_AdamW(Optimizer):
         params (iterable): iterable of parameters to optimize or
             dicts defining parameter groups.
         lr (float, optional): learning rate. (default: 1e-3)
-        betas (Tuple[float, float, flot], optional): coefficients used for
-            first- and second-order moments. (default: (0.98, 0.92, 0.99))
+        betas (Tuple[float, float], optional): coefficients used for
+            first- and second-order moments. (default: (0.90, 0.999)
         eps (float, optional): term added to the denominator to improve
             numerical stability. (default: 1e-8)
         weight_decay (float, optional): decoupled weight decay
@@ -25,3 +25,39 @@ class CoordinateWiseClipping_AdamW(Optimizer):
             (default: True)
         
     """
+
+    def __init__(self,
+                 params,
+                 lr=1e-3,
+                 betas=(0.90, 0.99),
+                 eps=1e-8,
+                 weight_decay=0.0,
+                 percent_to_clip: float = 0.50,
+                 use_decoupled_weight_decay: bool = True):
+        if not 0.0 <= max_grad_norm:
+            raise ValueError('Invalid Max grad norm: {}'.format(max_grad_norm))
+        if not 0.0 <= lr:
+            raise ValueError('Invalid learning rate: {}'.format(lr))
+        if not 0.0 <= eps:
+            raise ValueError('Invalid epsilon value: {}'.format(eps))
+        if not 0.0 <= betas[0] < 1.0:
+            raise ValueError('Invalid beta parameter at index 0: {}'.format(
+                betas[0]))
+        if not 0.0 <= betas[1] < 1.0:
+            raise ValueError('Invalid beta parameter at index 1: {}'.format(
+                betas[1]))
+        if not 0.0 <= percent_to_clip < 1.0:
+            raise ValueError('Invalid percent_to_clip parameter: {}'.format(
+                percent_to_clip))
+            
+        defaults = dict(lr=lr,
+                        betas=betas,
+                        eps=eps,
+                        weight_decay=weight_decay,
+                        top_k_percent=percent_to_clip,
+                        no_prox=no_prox,
+                        decoupled_wd=use_decoupled_weight_decay)
+        super().__init__(params, defaults)
+        
+        
+
